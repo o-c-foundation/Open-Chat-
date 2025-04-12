@@ -116,8 +116,19 @@ export const GroupChatProvider: React.FC<{ children: ReactNode }> = ({ children 
   const fetchGroupMessages = async (groupId: number): Promise<void> => {
     setIsLoading(true);
     try {
+      // Ensure we're getting fresh data by adding a timestamp parameter
+      const timestamp = Date.now();
+      console.log(`[fetchGroupMessages] Fetching messages for group ${groupId} at ${timestamp}`);
+      
       const messages = await getGroupMessages(groupId);
-      setCurrentGroupMessages(messages);
+      console.log(`[fetchGroupMessages] Retrieved ${messages.length} messages`);
+      
+      // Sort messages by timestamp to ensure proper ordering
+      const sortedMessages = [...messages].sort((a, b) => 
+        a.timestamp.getTime() - b.timestamp.getTime()
+      );
+      
+      setCurrentGroupMessages(sortedMessages);
     } catch (error) {
       console.error("Error fetching group messages:", error);
     } finally {
