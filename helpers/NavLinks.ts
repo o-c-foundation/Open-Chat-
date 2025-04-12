@@ -23,10 +23,6 @@ export const navLinks: NavItems[] = [
     page: "groups",
   },
   {
-    label: "Group Chat",
-    page: "groups/chat",
-  },
-  {
     label: "Tutorials",
     page: "tutorials",
   },
