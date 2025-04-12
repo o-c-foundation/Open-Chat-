@@ -197,28 +197,79 @@ export const ChatProvider = ({ children }: any) => {
     try {
       if (!address || !name) return;
       const contract = await connectToSmartContract();
+      console.log(`[handleAddFriend] Adding friend: ${name} (${address})`);
+      
+      // Check if the user exists before trying to add
+      try {
+        const friendUsername = await contract.getUsername(address);
+        console.log(`[handleAddFriend] Friend username: ${friendUsername}`);
+      } catch (error) {
+        console.error("[handleAddFriend] Error checking friend username:", error);
+        throw new Error("User is not registered");
+      }
+      
       const newFriend = await contract.addFriend(address, name);
+      console.log("[handleAddFriend] Friend request sent, waiting for confirmation...");
       await newFriend.wait();
+      console.log("[handleAddFriend] Friend request confirmed");
+      
+      // Save to localStorage that we've sent a request to this address
+      if (typeof window !== "undefined") {
+        const sentRequests = JSON.parse(localStorage.getItem(`sentRequests_${account}`) || "[]");
+        if (!sentRequests.includes(address.toLowerCase())) {
+          sentRequests.push(address.toLowerCase());
+          localStorage.setItem(`sentRequests_${account}`, JSON.stringify(sentRequests));
+        }
+      }
+      
       setIsLoading(false);
+      
+      // Refresh the page to update UI
       if (typeof window !== "undefined") {
         window.location.reload();
       }
 
-      if (newFriend) {
-        toast({
-          title: "Added Successfully!",
-          message: "Successfuly added a new friend.",
-          type: "success",
-        });
-      }
-    } catch (err) {
-      setIsLoading(false);
       toast({
-        title: "Error adding a friend",
-        message:
-          "It seems you are adding an unregistered or a user that you blocked.",
+        title: "Friend Request Sent!",
+        message: "Your friend request has been sent successfully.",
+        type: "success",
+      });
+    } catch (err: any) {
+      setIsLoading(false);
+      console.error("[handleAddFriend] Error:", err);
+      
+      // Provide more specific error messages based on the error
+      let errorMessage = "Failed to send friend request. Please try again.";
+      if (err.message.includes("User is not registered")) {
+        errorMessage = "This user is not registered on the platform.";
+      } else if (err.message.includes("User is already a friend")) {
+        errorMessage = "This user is already in your friends list.";
+      } else if (err.message.includes("blocked")) {
+        errorMessage = "You cannot add a user that you have blocked or who has blocked you.";
+      }
+      
+      toast({
+        title: "Error Adding Friend",
+        message: errorMessage,
         type: "error",
       });
+    }
+  };
+
+  // Check for pending friend requests from other users
+  const checkIncomingFriendRequests = async (): Promise<string[]> => {
+    if (!account) return [];
+    
+    try {
+      // This could be enhanced in the future with a contract method
+      // Currently the contract doesn't store pending requests separately
+      
+      // For now, we'll look at localstorage from other accounts
+      // In a real implementation, this would use contract events or a dedicated data structure
+      return [];
+    } catch (error) {
+      console.error("Error checking incoming friend requests:", error);
+      return [];
     }
   };
 
@@ -357,6 +408,7 @@ export const ChatProvider = ({ children }: any) => {
         handleBlockUser,
         handleUnblockUser,
         handleAddFriend,
+        checkIncomingFriendRequests,
       }}
     >
       {children}

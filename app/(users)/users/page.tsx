@@ -213,6 +213,85 @@ export default function UserPage() {
               </section>
             )}
 
+            {/* Friend Requests Section */}
+            {sentRequests.length > 0 && (
+              <section className="mb-12">
+                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyber-yellow">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    <circle cx="19" cy="19" r="4" className="text-cyber-yellow"></circle>
+                    <path d="M19 16v2"></path>
+                    <path d="M19 22v0"></path>
+                  </svg>
+                  Pending Friend Requests
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {userList
+                    .filter((user: UserList) => hasSentRequest(user.accountAddress))
+                    .map((user: UserList, index: number) => (
+                      <motion.div
+                        key={user.accountAddress}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        className="bg-cyber-gradient rounded-lg border border-cyber-yellow/30 overflow-hidden hover:shadow-cyber transition-shadow duration-300"
+                      >
+                        <div className="p-4">
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="relative w-12 h-12 rounded-full bg-cyber-yellow/40 overflow-hidden border-2 border-cyber-yellow/50 flex items-center justify-center">
+                                <span className="text-white font-bold text-xl">{user.name.charAt(0)}</span>
+                                <div className="absolute inset-0 bg-cyber-grid opacity-20"></div>
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-bold text-white">{user.name}</h3>
+                                <p className="text-xs text-gray-400">
+                                  {user.accountAddress.slice(0, 6)}...{user.accountAddress.slice(-4)}
+                                </p>
+                                <div className="mt-1 flex items-center">
+                                  <span className="text-xs text-cyber-yellow flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <circle cx="12" cy="12" r="10"></circle>
+                                      <path d="M12 8v4"></path>
+                                      <path d="M12 16h.01"></path>
+                                    </svg>
+                                    Request Pending
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <p className="text-sm text-gray-400 mb-3">
+                            Your friend request is pending. Once {user.name} accepts, you can start chatting.
+                          </p>
+                          
+                          <Button
+                            variant="outline"
+                            className="w-full border-cyber-yellow/50 text-cyber-yellow"
+                            disabled={true}
+                            label={
+                              <span className="flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"></path>
+                                  <path d="M12 8v4"></path>
+                                  <path d="M12 16h.01"></path>
+                                </svg>
+                                Awaiting Response
+                              </span>
+                            }
+                          />
+                        </div>
+                      </motion.div>
+                    ))}
+                </div>
+              </section>
+            )}
+
             {/* Available Users Section */}
             <section>
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">

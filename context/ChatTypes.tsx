@@ -48,6 +48,7 @@ export interface InitialStateInterface {
   }) => Promise<void> | "";
   handleBlockUser: (address: string) => Promise<void> | "";
   handleUnblockUser: (address: string) => Promise<void> | "";
+  checkIncomingFriendRequests: () => Promise<string[]> | [];
 }
 
 export const initialState: InitialStateInterface = {
@@ -72,4 +73,5 @@ export const initialState: InitialStateInterface = {
   handleAddFriend: () => "",
   handleBlockUser: () => "",
   handleUnblockUser: () => "",
+  checkIncomingFriendRequests: () => [],
 };
