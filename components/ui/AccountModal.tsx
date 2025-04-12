@@ -28,7 +28,7 @@ const AccountModal: FC<ModalProps> = ({ setOpenModal }) => {
     }
     
     setFormError("");
-    createAccount({ name, marketingOptIn });
+    createAccount({ name });
   };
 
   return (

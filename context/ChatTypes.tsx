@@ -29,7 +29,7 @@ export interface InitialStateInterface {
   currentUser: string;
   connectWallet: () => Promise<void> | "";
   setMessages: React.Dispatch<React.SetStateAction<MessagesType[]>>;
-  createAccount: ({ name }: { name: string }) => Promise<void> | "";
+  createAccount: ({ name, marketingOptIn }: { name: string, marketingOptIn?: boolean }) => Promise<void> | "";
   getUserMessages: (address: string) => Promise<void> | [];
   getUsername: (address: string) => Promise<string | undefined> | "";
   handleSendMessage: ({
