@@ -143,8 +143,7 @@ function unblockUser(address userAddress) external userExists(msg.sender) {
     function sendMessage(address recipient, string calldata content) external userExists(msg.sender) {
         require(bytes(content).length > 0, "Message content cannot be empty");
         require(msg.sender != recipient, "You can't message yourself");
-        require(isFriend(msg.sender, recipient), "User is not a friend");
-
+        
         if(users[recipient].blockedUsers[msg.sender]) {
             revert("You are blocked by this user");
         }
@@ -156,10 +155,8 @@ function unblockUser(address userAddress) external userExists(msg.sender) {
         emit MessageSent(msg.sender, recipient, content);
     }
 
-    function readMessages(address friendAddress) external view userExists(msg.sender) returns (Message[] memory) {
-        require(isFriend(msg.sender, friendAddress), "User is not a friend");
-
-        bytes32 chatCode = _getChatCode(msg.sender, friendAddress);
+    function readMessages(address otherAddress) external view userExists(msg.sender) returns (Message[] memory) {
+        bytes32 chatCode = _getChatCode(msg.sender, otherAddress);
         return allMessages[chatCode];
     }
 
