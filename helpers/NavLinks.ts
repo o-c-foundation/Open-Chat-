@@ -11,7 +11,7 @@ export const navLinks: NavItems[] = [
     page: "/",
   },
   {
-    label: "Users",
+    label: "Discover",
     page: "users",
   },
   {
@@ -19,7 +19,19 @@ export const navLinks: NavItems[] = [
     page: "chat",
   },
   {
+    label: "Groups",
+    page: "groups",
+  },
+  {
+    label: "Group Chat",
+    page: "groups/chat",
+  },
+  {
     label: "Tutorials",
     page: "tutorials",
+  },
+  {
+    label: "Documentation",
+    page: "https://openchat-docs.gitbook.io/openchat-technical-documentation/",
   },
 ];

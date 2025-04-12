@@ -109,7 +109,7 @@ export const ChatProvider = ({ children }: any) => {
     }
   };
 
-  const createAccount = async ({ name }: { name: string }): Promise<void> => {
+  const createAccount = async ({ name, marketingOptIn = false }: { name: string, marketingOptIn?: boolean }): Promise<void> => {
     setIsLoading(true);
     try {
       const contract = await connectToSmartContract();
@@ -119,7 +119,10 @@ export const ChatProvider = ({ children }: any) => {
       await newUser.wait();
       setIsLoading(false);
 
+      // Store marketing preferences
       if (typeof window !== "undefined") {
+        // Store marketing preference in localStorage
+        localStorage.setItem(`marketing_optin_${account}`, marketingOptIn ? "true" : "false");
         window.location.reload();
       }
 
@@ -155,14 +158,17 @@ export const ChatProvider = ({ children }: any) => {
     setIsLoading(true);
     try {
       if (!content || !address) return;
+      
+      // Try to use the session wallet if it exists and is verified
       const contract = await connectToSmartContract();
       const newMessage = await contract.sendMessage(address, content);
       await newMessage.wait();
       setIsLoading(false);
+      
       if (newMessage) {
         toast({
           title: "Message Sent!",
-          message: "Successfuly sent a message to your friend.",
+          message: "Successfully sent a message to your friend.",
           type: "success",
         });
       }

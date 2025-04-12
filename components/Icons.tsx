@@ -7,6 +7,9 @@ import {
   Menu,
   X,
   UserPlus2,
+  Plus,
+  AlertCircle,
+  Check
 } from "lucide-react";
 
 export const Icons = {
@@ -18,6 +21,9 @@ export const Icons = {
   Menu,
   X,
   UserPlus2,
+  Plus,
+  AlertCircle,
+  Check
 };
 
 export default Icons;

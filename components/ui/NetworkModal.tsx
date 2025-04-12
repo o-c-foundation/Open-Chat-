@@ -12,7 +12,6 @@ import {
 
 import Image from "next/image";
 import networks from "@/public/logo";
-import Icons from "@/components/Icons";
 import Heading from "@/components/common/Heading";
 
 interface ModalProps {
@@ -66,38 +65,56 @@ const NetworkModal: FC<ModalProps> = ({
   }, [selectedNetwork]);
 
   return (
-    <div className="fixed backdrop-blur-sm inset-0 flex items-center justify-center bg-opacity-0 z-10">
-      <div className="absolute bg-gray-800 rounded-md p-8">
+    <div className="fixed inset-0 flex items-center justify-center bg-cyber-black/80 backdrop-blur-md z-50">
+      <div className="relative bg-cyber-gradient rounded-xl border border-cyber-blue/30 shadow-cyber p-8 max-w-md w-full max-h-[90vh] overflow-y-auto my-auto mx-4">
+        <div className="absolute inset-0 bg-cyber-grid bg-[size:20px_20px] opacity-20 rounded-xl"></div>
         <button
-          className="absolute top-3 right-3"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-cyber-blue/20 flex items-center justify-center hover:bg-cyber-blue/40 transition-colors"
           onClick={() => setOpenModal(false)}
         >
-          <Icons.X className="text-white" />
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="text-white"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
-        <Heading size="sm" className="m-3">
-          Select Chain
-        </Heading>
-        <div className="grid grid-cols-2 md:grid-cols-2">
-          {options.map((chain, index) => (
-            <div
-              className="flex flex-col items-center justify-center p-5"
-              key={index}
-            >
-              <h3 className="pb-2 text-center text-white">{chain.network}</h3>
+        <div className="relative z-10">
+          <Heading size="sm" className="mb-6 text-center text-white">
+            Select Network
+          </Heading>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {options.map((chain, index) => (
               <div
-                className="flex items-center justify-center"
-                onClick={() => setSelectedNetwork(chain.network)}
+                key={index}
+                className="flex flex-col items-center gap-3 transition-all duration-300"
+                onClick={() => {
+                  setSelectedNetwork(chain.network);
+                  setTimeout(() => setOpenModal(false), 500);
+                }}
               >
-                <Image
-                  src={chain.image}
-                  alt="network"
-                  width={35}
-                  height={35}
-                  className="rounded-full outline-none border-none cursor-pointer hover:scale-125"
-                />
+                <div className={`w-14 h-14 rounded-full ${selectedNetwork === chain.network ? 'bg-cyber-blue/30 border-2 border-cyber-blue' : 'bg-cyber-dark/50 hover:bg-cyber-blue/20'} flex items-center justify-center cursor-pointer transition-all duration-300 group`}>
+                  <Image
+                    src={chain.image}
+                    alt={chain.network}
+                    width={35}
+                    height={35}
+                    className="rounded-full cursor-pointer group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <span className="text-sm text-center text-gray-300">{chain.network}</span>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

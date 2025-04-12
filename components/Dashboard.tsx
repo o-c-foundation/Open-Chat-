@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 import Heading from "@/components/common/Heading";
 import Paragraph from "@/components/common/Paragraph";
-import DappChat from "@/public/assets/DappChat.png";
+import OpenChatImage from "@/public/assets/DappChat.png";
 import Features from "@/components/Features";
 import AccountModal from "@/components/ui/AccountModal";
 
@@ -24,7 +24,7 @@ const Dashboard = () => {
           </Heading>
           <Paragraph className="max-w-md md:text-left text-gray-200">
             Message anyone from the blockchain anonymously.{" "}
-            <span className="font-bold text-light-gold">DappChat</span> is a
+            <span className="font-bold text-light-gold">OpenChat</span> is a
             decentralized protocol that allows wallet-to-wallet messaging
             powered by multi-chain interoperability.{" "}
           </Paragraph>
@@ -43,7 +43,7 @@ const Dashboard = () => {
             className="img-shadow rounded-xl"
             width={800}
             height={700}
-            src={DappChat}
+            src={OpenChatImage}
             alt="Decentralized-Messaging"
             priority
           />

@@ -1,7 +1,9 @@
 import abi from "./DappChat.json";
+import groupChatAbi from "./OpenChatGroups.json";
 
 export const contractAddress = "0x56Dc3b782C3192169f7ED570a1e6Cb2A533eb2E2";
 export const contractABI = abi;
+export const groupChatABI = groupChatAbi;
 
 // rpcs
 export const hardhatRPC = "http://localhost:8545";
@@ -19,3 +21,6 @@ export const polygonContract = "0x810F6c8338365D4bF571E0b397A26623113940B3";
 export const sepoliaContract = "0x56Dc3b782C3192169f7ED570a1e6Cb2A533eb2E2";
 export const hhContract = "";
 export const bscContract = "0x089CB8783ffE1f195f73E3F21e7762E228B0ee1E";
+
+// Group chat contract addresses (Sepolia only to start)
+export const sepoliaGroupChatContract = "0x27D3cc433353aE5357902D442A495Ee3d3cC2eDD"; // This is a placeholder; replace with actual deployed address

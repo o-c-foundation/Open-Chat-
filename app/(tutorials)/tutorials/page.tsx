@@ -1,16 +1,16 @@
-import Tutorials from "@/components/Tutorials";
+import HowItWorks from "@/components/HowItWorks";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "DappChat | Tutorials",
+  title: "OpenChat | How It Works",
   description:
-    "A multi-chain and fully on-chain decentralized messaging application",
+    "Learn how our decentralized messaging application works on testnet networks",
 };
 
 const page = () => {
   return (
     <div className="min-h-screen">
-      <Tutorials />
+      <HowItWorks />
     </div>
   );
 };

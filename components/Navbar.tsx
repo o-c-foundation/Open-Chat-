@@ -9,12 +9,14 @@ import Image from "next/image";
 import Heading from "@/components/common/Heading";
 import Button from "@/components/common/Button";
 import NetworkModal from "@/components/ui/NetworkModal";
+import SessionWalletModal from "@/components/ui/SessionWalletModal";
 import { Icons } from "@/components/Icons";
 import { useChatContext } from "@/context/DappChat.context";
 import { navLinks } from "@/helpers/NavLinks";
 import { getCurrentChain } from "@/lib/Api";
+import { hasSessionWallet, isSessionWalletVerified } from "@/lib/utils";
 
-import AnonymousIcon from "@/public/assets/anonymous.png";
+import OpenChatLogo from "@/public/assets/openchat-logo.png";
 
 const Navbar = () => {
   const { systemTheme, theme, setTheme } = useTheme();
@@ -28,6 +30,9 @@ const Navbar = () => {
     "Set Network"
   );
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openSessionWalletModal, setOpenSessionWalletModal] = useState<boolean>(false);
+  const [hasWallet, setHasWallet] = useState<boolean>(false);
+  const [walletVerified, setWalletVerified] = useState<boolean>(false);
 
   const fetchAccountUsername = async () => {
     const username = await getUsername(account);
@@ -49,133 +54,197 @@ const Navbar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
+  // Check if user has a session wallet
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHasWallet(hasSessionWallet());
+      setWalletVerified(isSessionWalletVerified());
+    }
+  }, [openSessionWalletModal]);
+
+  // Get wallet status icon
+  const getWalletStatusIcon = () => {
+    if (!hasWallet) {
+      return <Icons.Plus className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-blue" />;
+    } else if (!walletVerified) {
+      return <Icons.AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-yellow" />;
+    } else {
+      return <Icons.Check className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-green" />;
+    }
+  };
+
   return (
-    <div className="w-full mx-auto px-4 sm:px-20 fixed top-0 z-40 bg-white dark:bg-slate-900">
-      <div className="flex items-center justify-between pr-3 md:pr-0 py-3 md:py-5">
-        <Link href="/">
-          <div className="flex items-center space-x-2 cursor-pointer">
+    <div className="w-full mx-auto px-2 sm:px-4 md:px-6 fixed top-0 z-40 bg-cyber-dark border-b border-cyber-blue/30 backdrop-blur-sm">
+      <div className="flex items-center justify-between py-3 sm:py-4">
+        <Link href="/" className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
+          <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-cyber-blue animate-cyber-pulse">
             <Image
-              src={AnonymousIcon}
-              className="rounded-full"
-              alt="icon"
-              height={50}
-              width={50}
+              src={OpenChatLogo}
+              alt="OpenChat Logo"
+              fill
+              className="object-cover"
             />
-            <div className="hidden md:block">
-              <Heading
-                size="sm"
-                className="text-2xl text-black dark:text-white"
-              >
-                Dapp<span className="text-light-gold">Chat</span>
-              </Heading>
-            </div>
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-wider text-white">
+              Open<span className="text-cyber-blue">Chat</span>
+            </h1>
+            <div className="h-0.5 w-0 group-hover:w-full bg-cyber-blue transition-all duration-300"></div>
           </div>
         </Link>
-        <div className="hidden md:flex items-center justify-center space-x-6 flex-grow font-bold">
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
           {navLinks.map((item, index) => (
-            <Link
-              key={index}
-              href={item.page}
-              className="text-black cursor-pointer hover:-translate-y-1 transition-transform dark:text-neutral-100"
-              onClick={() => setNavbar(false)}
-            >
-              {item.label}
-            </Link>
+            item.page.startsWith('http') ? (
+              // External link
+              <a
+                key={index}
+                href={item.page}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-cyber-blue transition-colors relative group"
+              >
+                <span>{item.label}</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyber-blue group-hover:w-full transition-all duration-300"></span>
+              </a>
+            ) : (
+              // Internal link
+              <Link
+                key={index}
+                href={item.page}
+                className="text-gray-300 hover:text-cyber-blue transition-colors relative group"
+              >
+                <span>{item.label}</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyber-blue group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            )
           ))}
         </div>
-        <div className="flex flex-row space-x-2 text-[10px] md:text-lg">
+
+        {/* Right Side Buttons */}
+        <div className="flex items-center space-x-1 xs:space-x-2 sm:space-x-3">
           <Button
             onClick={handleOpenModal}
-            className="rounded-xl text-white border font-bold p-3 bg-teal-600 dark:bg-slate-700 border-none block hover:scale-105"
-            label={currentChain ? currentChain : "Set Network"}
+            variant="glow"
+            size="sm"
+            label={
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <span className="w-2 h-2 rounded-full bg-cyber-green animate-pulse"></span>
+                <span className="text-xs sm:text-sm truncate max-w-[60px] sm:max-w-none">{currentChain ? currentChain : "Set Network"}</span>
+              </div>
+            }
           />
+          
           <Button
             onClick={() => connectWallet()}
-            className="rounded-xl text-white border font-bold p-3 bg-teal-600 dark:bg-blue-700 border-none block hover:scale-105"
+            variant="primary"
+            size="sm"
             label={
               account ? (
-                account.slice(0, 5) + ".."
+                <span className="text-xs sm:text-sm">{account.slice(0, 4) + ".." + account.slice(-3)}</span>
               ) : checkMetamask ? (
-                "Connnect Wallet"
+                <span className="text-xs sm:text-sm">Connect</span>
               ) : (
                 <Link href="https://metamask.io/download/">
-                  Install metamask
+                  <span className="text-xs sm:text-sm">Install MetaMask</span>
                 </Link>
               )
             }
           />
-          <div className="hidden md:flex">
+
+          {account && (
             <Button
-              onClick={() =>
-                setTheme(currentTheme === "dark" ? "light" : "dark")
-              }
-              className="bg-slate-100 p-2 rounded-xl hover:scale-105"
-              label={
-                currentTheme === "dark" ? (
-                  <Icons.Sun size={30} className="h-7 w-7 dark:text-black" />
-                ) : (
-                  <Icons.Moon size={30} className="h-7 w-7" />
-                )
-              }
+              onClick={() => setOpenSessionWalletModal(true)}
+              variant={walletVerified ? "success" : hasWallet ? "warning" : "secondary"}
+              size="icon"
+              aria-label="Session Wallet"
+              title={walletVerified ? "Session Wallet Active" : hasWallet ? "Session Wallet Needs Funding" : "Create Session Wallet"}
+              label={getWalletStatusIcon()}
             />
-          </div>
+          )}
+          
+          <Button
+            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle theme"
+            label={
+              currentTheme === "dark" ? (
+                <Icons.Sun className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-yellow" />
+              ) : (
+                <Icons.Moon className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-purple" />
+              )
+            }
+          />
+          
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Button
-              className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
+              variant="ghost"
+              size="icon"
               onClick={() => setNavbar(!navbar)}
+              aria-label="Toggle menu"
               label={
                 navbar ? (
-                  <Icons.X className="dark:text-white" size={30} />
+                  <Icons.X className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-red" />
                 ) : (
-                  <Icons.Menu className="dark:text-white" size={30} />
+                  <Icons.Menu className="h-4 w-4 sm:h-5 sm:w-5 text-cyber-blue" />
                 )
               }
             />
           </div>
         </div>
       </div>
-      <div
-        className={`flex justify-center text-center pb-3 mt-8 md:block z-50 md:pb-0 md:mt-0 ${
-          navbar ? "block" : "hidden"
-        }`}
-      >
-        <div className="items-center justify-center md:hidden font-bold space-y-8 md:space-x-6 md:space-y-0">
-          {navLinks.map((item, index) => {
-            return (
-              <Link
-                key={index}
-                href={item.page}
-                className={
-                  "block lg:inline-block text-black cursor-pointer hover:scale-105 dark:text-neutral-100"
-                }
-                onClick={() => setNavbar(!navbar)}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-          <div className="py-2">
-            <Button
-              onClick={() =>
-                setTheme(currentTheme === "dark" ? "light" : "dark")
-              }
-              className="bg-slate-100 p-2 rounded-xl hover:scale-105"
-              label={
-                currentTheme === "dark" ? (
-                  <Icons.Sun size={30} className="h-7 w-7 dark:text-black" />
-                ) : (
-                  <Icons.Moon size={30} className="h-7 w-7" />
-                )
-              }
-            />
+
+      {/* Mobile Navigation */}
+      {navbar && (
+        <div className="md:hidden pt-3 pb-4 sm:pt-4 sm:pb-6 border-t border-cyber-blue/20 animate-fadeIn">
+          <div className="flex flex-col space-y-3">
+            {navLinks.map((item, index) => (
+              item.page.startsWith('http') ? (
+                // External link
+                <a
+                  key={index}
+                  href={item.page}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-cyber-blue py-2 px-3 sm:px-4 transition-colors rounded-md hover:bg-cyber-gray/50 text-sm sm:text-base"
+                  onClick={() => setNavbar(false)}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                // Internal link
+                <Link
+                  key={index}
+                  href={item.page}
+                  className="text-gray-300 hover:text-cyber-blue py-2 px-3 sm:px-4 transition-colors rounded-md hover:bg-cyber-gray/50 text-sm sm:text-base"
+                  onClick={() => setNavbar(false)}
+                >
+                  {item.label}
+                </Link>
+              )
+            ))}
           </div>
         </div>
-      </div>
+      )}
+      
       {openModal && (
         <NetworkModal
           selectedNetwork={selectedNetwork}
           setSelectedNetwork={setSelectedNetwork}
           setOpenModal={setOpenModal}
+        />
+      )}
+
+      {openSessionWalletModal && (
+        <SessionWalletModal
+          setOpenModal={setOpenSessionWalletModal}
+          onComplete={() => {
+            setHasWallet(hasSessionWallet());
+            setWalletVerified(isSessionWalletVerified());
+          }}
         />
       )}
     </div>
